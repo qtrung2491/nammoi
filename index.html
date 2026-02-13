@@ -16,6 +16,7 @@
     />
 
     <style>
+      /* --- CSS RESET & BASIC --- */
       * {
         margin: 0;
         padding: 0;
@@ -27,6 +28,7 @@
         overflow: hidden;
         height: 100vh;
         width: 100vw;
+        /* Ảnh nền ban đầu */
         background-image: url("./tet.png");
         background-size: cover;
         background-position: center;
@@ -66,6 +68,8 @@
         height: 100%;
         z-index: 2;
         pointer-events: none;
+        /* Hiệu ứng chuyển màu nền nhanh hơn để khớp nhịp pháo */
+        transition: background-color 0.1s; 
       }
 
       canvas {
@@ -135,6 +139,7 @@
         letter-spacing: 1px;
       }
 
+      /* --- KHUNG THIỆP (CARD) --- */
       #card-screen {
         display: none;
         width: 85%;
@@ -171,15 +176,9 @@
       }
 
       @keyframes shine {
-        0% {
-          left: -100%;
-        }
-        20% {
-          left: 100%;
-        }
-        100% {
-          left: 100%;
-        }
+        0% { left: -100%; }
+        20% { left: 100%; }
+        100% { left: 100%; }
       }
 
       .card-inner {
@@ -233,47 +232,17 @@
         top: -50px;
         animation: goldFall linear infinite;
       }
-      .gold-item:nth-child(1) {
-        left: 10%;
-        animation-duration: 3s;
-        animation-delay: 0s;
-      }
-      .gold-item:nth-child(2) {
-        left: 30%;
-        animation-duration: 4s;
-        animation-delay: 1s;
-      }
-      .gold-item:nth-child(3) {
-        left: 55%;
-        animation-duration: 3.5s;
-        animation-delay: 0.5s;
-      }
-      .gold-item:nth-child(4) {
-        left: 75%;
-        animation-duration: 4.5s;
-        animation-delay: 2s;
-      }
-      .gold-item:nth-child(5) {
-        left: 90%;
-        animation-duration: 3.8s;
-        animation-delay: 1.5s;
-      }
+      .gold-item:nth-child(1) { left: 10%; animation-duration: 3s; animation-delay: 0s; }
+      .gold-item:nth-child(2) { left: 30%; animation-duration: 4s; animation-delay: 1s; }
+      .gold-item:nth-child(3) { left: 55%; animation-duration: 3.5s; animation-delay: 0.5s; }
+      .gold-item:nth-child(4) { left: 75%; animation-duration: 4.5s; animation-delay: 2s; }
+      .gold-item:nth-child(5) { left: 90%; animation-duration: 3.8s; animation-delay: 1.5s; }
 
       @keyframes goldFall {
-        0% {
-          transform: translateY(0) rotate(0deg);
-          opacity: 0;
-        }
-        10% {
-          opacity: 1;
-        }
-        90% {
-          opacity: 1;
-        }
-        100% {
-          transform: translateY(400px) rotate(360deg);
-          opacity: 0;
-        }
+        0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { transform: translateY(400px) rotate(360deg); opacity: 0; }
       }
 
       .card-title {
@@ -350,27 +319,13 @@
       }
 
       @keyframes float {
-        0%,
-        100% {
-          transform: translateY(0);
-        }
-        50% {
-          transform: translateY(-15px);
-        }
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
       }
       @keyframes pulse {
-        0% {
-          transform: scale(1);
-          box-shadow: 0 0 0 0 rgba(255, 65, 108, 0.7);
-        }
-        70% {
-          transform: scale(1.05);
-          box-shadow: 0 0 0 15px rgba(255, 65, 108, 0);
-        }
-        100% {
-          transform: scale(1);
-          box-shadow: 0 0 0 0 rgba(255, 65, 108, 0);
-        }
+        0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 65, 108, 0.7); }
+        70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(255, 65, 108, 0); }
+        100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 65, 108, 0); }
       }
     </style>
   </head>
@@ -426,10 +381,7 @@
           <div class="card-content">
             <p>Năm mới đã về, chúc bạn và gia đình:</p>
             <p>
-              <b
-                >Sức khỏe dồi dào - Gia đạo êm ấm<br />Tài lộc hanh thông - Vạn
-                sự bình an</b
-              >
+              <b>Sức khỏe dồi dào - Gia đạo êm ấm<br />Tài lộc hanh thông - Vạn sự bình an</b>
             </p>
           </div>
 
@@ -616,7 +568,7 @@
             size: IS_MOBILE ? "1.6" : "2.5",
             autoLaunch: true,
             finale: false,
-            skyLighting: "2",
+            skyLighting: "2", // Giữ nguyên, ta sẽ chỉnh multiplier trong hàm
             hideControls: true,
             longExposure: false,
             scaleFactor: IS_MOBILE ? 0.7 : 1,
@@ -1160,15 +1112,21 @@
         if (Math.random() < 0.2) return seqTwoRandom();
         return seqRandomShell();
       }
+      
+      // --- PHẦN QUAN TRỌNG: MÀU SẮC & ÁNH SÁNG VẬT LÝ ---
       const currentSkyColor = { r: 0, g: 0, b: 0 };
       const targetSkyColor = { r: 0, g: 0, b: 0 };
+      
       function colorSky(speed) {
-        const maxSkySaturation = Number(store.state.config.skyLighting) * 15;
+        // Tăng multiplier từ 15 lên 60 để ánh sáng cực mạnh (Flash Bang)
+        const maxSkySaturation = Number(store.state.config.skyLighting) * 60;
         const maxStarCount = 500;
         let totalStarCount = 0;
+        
         targetSkyColor.r = 0;
         targetSkyColor.g = 0;
         targetSkyColor.b = 0;
+        
         COLOR_CODES.forEach((color) => {
           const tuple = {
             r: parseInt(color.substr(1, 2), 16),
@@ -1181,32 +1139,36 @@
           targetSkyColor.g += tuple.g * count;
           targetSkyColor.b += tuple.b * count;
         });
+        
+        // Tăng độ nhạy (intensity) để ít pháo cũng sáng
         const intensity = Math.pow(
           Math.min(1, totalStarCount / maxStarCount),
-          0.3,
+          0.2 // Giảm số mũ xuống để sáng dễ hơn
         );
+        
         const maxColorComponent = Math.max(
           1,
           targetSkyColor.r,
           targetSkyColor.g,
           targetSkyColor.b,
         );
-        targetSkyColor.r =
-          (targetSkyColor.r / maxColorComponent) * maxSkySaturation * intensity;
-        targetSkyColor.g =
-          (targetSkyColor.g / maxColorComponent) * maxSkySaturation * intensity;
-        targetSkyColor.b =
-          (targetSkyColor.b / maxColorComponent) * maxSkySaturation * intensity;
-        const colorChange = 10;
-        currentSkyColor.r +=
-          ((targetSkyColor.r - currentSkyColor.r) / colorChange) * speed;
-        currentSkyColor.g +=
-          ((targetSkyColor.g - currentSkyColor.g) / colorChange) * speed;
-        currentSkyColor.b +=
-          ((targetSkyColor.b - currentSkyColor.b) / colorChange) * speed;
+        
+        targetSkyColor.r = (targetSkyColor.r / maxColorComponent) * maxSkySaturation * intensity;
+        targetSkyColor.g = (targetSkyColor.g / maxColorComponent) * maxSkySaturation * intensity;
+        targetSkyColor.b = (targetSkyColor.b / maxColorComponent) * maxSkySaturation * intensity;
+        
+        // Giảm colorChange xuống 5 (thay vì 10) để màu chớp nhanh hơn
+        const colorChange = 3; 
+        
+        currentSkyColor.r += ((targetSkyColor.r - currentSkyColor.r) / colorChange) * speed;
+        currentSkyColor.g += ((targetSkyColor.g - currentSkyColor.g) / colorChange) * speed;
+        currentSkyColor.b += ((targetSkyColor.b - currentSkyColor.b) / colorChange) * speed;
+        
+        // Áp dụng màu nền cho canvas-container
         document.querySelector(".canvas-container").style.backgroundColor =
           `rgb(${currentSkyColor.r | 0}, ${currentSkyColor.g | 0}, ${currentSkyColor.b | 0})`;
       }
+      
       let stageW, stageH;
       function handleResize() {
         const w = window.innerWidth;
